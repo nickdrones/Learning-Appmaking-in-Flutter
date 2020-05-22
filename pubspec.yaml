@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   get_mac: ^0.0.1
-  crypto: ^2.1.5
+  crypto: ^2.1.4
   location: ^3.0.0
 
 
