@@ -1,16 +1,12 @@
-# hbumactest
+# First Test of an App in Flutter
 
-A new Flutter application.
+I've never worked in Flutter before so this is a learning experience for me. It seems pretty intuitive and easy!
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+So far, all this app does is use a third-party plugin to read the device's MAC address, then create an MD5 hash of the MAC address to use as a unique device identifier. Finally, it reads and prints the device's current GPS coordinates. More will be coming soon!
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Plugins Used
+- get_mac 0.0.1
+- crypto 2.1.5
+- location 3.0.2
