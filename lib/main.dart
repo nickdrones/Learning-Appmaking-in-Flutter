@@ -5,6 +5,8 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert'; // for the utf8.encode method
 import 'package:location/location.dart';
 
+import 'package:wifi_info_plugin/wifi_info_plugin.dart';
+import 'dart:async';
 
 
 
@@ -59,6 +61,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  WifiInfoWrapper _wifiObject;
 
   void _incrementCounter() {
     setState(() {
@@ -73,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String _platformVersion = 'Unknown';
   String _encodedDeviceID = 'Not Calculated Yet';
   var GPScoords;
+  String macAddr;
+  String signalStrength;
   @override
   void initState() {
     super.initState();
@@ -119,14 +124,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _locationData = await location.getLocation();
 
+
+
+    WifiInfoWrapper wifiObject;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      wifiObject = await  WifiInfoPlugin.wifiDetails;
+
+    }
+    on PlatformException{
+
+    }
+    if (!mounted) return;
+
+    setState(() {
+
+      _wifiObject = wifiObject;
+    });
+
+
     setState(() {
       _platformVersion = platformVersion;
       _encodedDeviceID = encodedDeviceID.toString();
       GPScoords = _locationData.toString();
+      macAddr = _wifiObject!=null?_wifiObject.bssId.toString():"ip";
+      signalStrength = _wifiObject!=null?_wifiObject.signalStrength.toString():"ip";
+
     });
 
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +192,16 @@ class _MyHomePageState extends State<MyHomePage> {
 //              'You have pushed the button this many times:',
 //            ),
             Text(
-              '    MAC Address : $_platformVersion\n',
+              '    MAC Address of device: $_platformVersion\n',
             ),
             Text(
-              '    Encoded Mac : $_encodedDeviceID\n',
+              '    Encoded Mac of device: $_encodedDeviceID\n',
+            ),
+            Text(
+              '    MAC Of Connected AP: $macAddr\n',
+            ),
+            Text(
+              '    Signal Strength Connected AP: $signalStrength\n',
             ),
             Text(
               //    GPS Location
