@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:get_mac/get_mac.dart';
+import 'package:get_mac/get_mac.dart'; //get_mac plugin for returning device mac address
 import 'package:flutter/services.dart';
-import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart'; //crypto plugin for creating hash of mac address
 import 'dart:convert'; // for the utf8.encode method
-import 'package:location/location.dart';
-
-import 'package:wifi_info_plugin/wifi_info_plugin.dart';
+import 'package:location/location.dart'; //plugin for returning GPS location easily
+import 'package:wifi_info_plugin/wifi_info_plugin.dart'; //plugin for returning wifi info
 import 'dart:async';
 
 
 
 void main() {
-  runApp(MyApp());
+  runApp(MyApp()); //run app
 }
 
 class MyApp extends StatelessWidget {
@@ -61,7 +60,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  WifiInfoWrapper _wifiObject;
+  WifiInfoWrapper _wifiObject; //init the wifi object to be referenced later
 
   void _incrementCounter() {
     setState(() {
@@ -73,11 +72,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
-  String _platformVersion = 'Unknown';
-  String _encodedDeviceID = 'Not Calculated Yet';
-  var GPScoords;
-  String macAddr;
-  String signalStrength;
+  String _platformVersion = 'Unknown'; //temp var for device mac
+  String _encodedDeviceID = 'Not Calculated Yet';  //device id will be md5 of mac
+  var GPScoords; //init var for holding GPS location
+  String macAddr; //init var for wifi AP mac address
+  String signalStrength; //init var for AP signal strength
   @override
   void initState() {
     super.initState();
@@ -85,14 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   Future<void> initPlatformState() async {
     String platformVersion;
-    var encodedDeviceID;
+    var encodedDeviceID; //init temp var for device ID
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await GetMac.macAddress;
-      var bytes = utf8.encode(platformVersion);
-      encodedDeviceID =md5.convert(bytes);
+      platformVersion = await GetMac.macAddress; //get mac address, write to temp var
+      var bytes = utf8.encode(platformVersion); //encode mac as utf8
+      encodedDeviceID =md5.convert(bytes);  //then encode mac as md5 hash
     } on PlatformException {
-      platformVersion = 'Failed to get Device MAC Address.';
+      platformVersion = 'Failed to get Device MAC Address.'; //if it fails to get mac, print error
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -100,13 +99,13 @@ class _MyHomePageState extends State<MyHomePage> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    Location location = new Location();
+    Location location = new Location(); //init location object
 
     bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
+    PermissionStatus _permissionGranted; //vars for getting location permission
     LocationData _locationData;
 
-    _serviceEnabled = await location.serviceEnabled();
+    _serviceEnabled = await location.serviceEnabled(); //wait until location is enabled
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
@@ -114,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    _permissionGranted = await location.hasPermission();
+    _permissionGranted = await location.hasPermission(); //wait until location permission is granted
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
@@ -122,14 +121,14 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    _locationData = await location.getLocation();
+    _locationData = await location.getLocation(); //actually get current location
 
 
 
-    WifiInfoWrapper wifiObject;
+    WifiInfoWrapper wifiObject; //init wifi object
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      wifiObject = await  WifiInfoPlugin.wifiDetails;
+      wifiObject = await  WifiInfoPlugin.wifiDetails; //try getting details written to object
 
     }
     on PlatformException{
@@ -144,11 +143,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
     setState(() {
-      _platformVersion = platformVersion;
-      _encodedDeviceID = encodedDeviceID.toString();
-      GPScoords = _locationData.toString();
-      macAddr = _wifiObject!=null?_wifiObject.bssId.toString():"ip";
-      signalStrength = _wifiObject!=null?_wifiObject.signalStrength.toString():"ip";
+      _platformVersion = platformVersion; //set device mac
+      _encodedDeviceID = encodedDeviceID.toString(); //set device ID
+      GPScoords = _locationData.toString();  //set location
+      macAddr = _wifiObject!=null?_wifiObject.bssId.toString():"";  //set AP mac address
+      signalStrength = _wifiObject!=null?_wifiObject.signalStrength.toString():"";  //set signal strength
 
     });
 
@@ -195,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '    MAC Address of device: $_platformVersion\n',
             ),
             Text(
-              '    Encoded Mac of device: $_encodedDeviceID\n',
+              '    Encoded Mac of device: $_encodedDeviceID\n',     //print text on screen
             ),
             Text(
               '    MAC Of Connected AP: $macAddr\n',
