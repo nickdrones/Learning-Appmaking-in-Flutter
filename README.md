@@ -10,3 +10,4 @@ So far, all this app does is use a third-party plugin to read the device's MAC a
 - get_mac 0.0.1
 - crypto 2.1.5
 - location 3.0.2
+- wifi_info_plugin 1.0.6
